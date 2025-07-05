@@ -46,6 +46,6 @@ Public Interface ICommandContext
     ''' <typeparam name="TCommand">The type of the command to execute</typeparam>
     ''' <param name="command">The command to execute</param>
     ''' <returns>The command that was executed or NULL (Nothing in VB)</returns>
-    Function Execute(Of TCommand As ICommand)(ByRef command As TCommand) As TCommand
+    Function Execute(Of TCommand As ICommand)(ByVal command As TCommand) As TCommand
 
 End Interface

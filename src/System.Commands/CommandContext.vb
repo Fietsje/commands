@@ -20,6 +20,15 @@ Public Class CommandContext
     Public ReadOnly Property Logger As ILogger Implements ICommandContext.Logger
 
     ''' <summary>
+    ''' Gets the logging options for this command context.
+    ''' This property provides access to logging options that can be used to configure how commands are logged.
+    ''' </summary>
+    ''' <remarks>
+    ''' The logging options can include settings such as the style of friendly names used in log messages.
+    ''' </remarks>
+    Public ReadOnly Property LoggingOptions As LoggingOptions = New LoggingOptions()
+
+    ''' <summary>
     ''' Gets the command resolver for this command context.
     ''' This property provides access to a command resolver that can resolve commands within the context.
     ''' </summary>
@@ -33,9 +42,9 @@ Public Class CommandContext
     ''' </summary>
     ''' <param name="logger">The logger.</param>
     ''' <param name="resolver">The resolver.</param>
-    Sub New(logger As ILogger, resolver As ICommandResolver)
+    Sub New(Optional logger As ILogger = Nothing, Optional resolver As ICommandResolver = Nothing)
         _Logger = logger
-        _Resolver = resolver
+        _Resolver = IIf(resolver IsNot Nothing, resolver, New CommandResolver(logger))
         _IsDisposed = False
     End Sub
 
@@ -49,9 +58,30 @@ Public Class CommandContext
     ''' <returns>
     ''' The command that was executed or NULL (Nothing in VB)
     ''' </returns>
-    ''' <exception cref="System.NotImplementedException"></exception>
-    Public Function Execute(Of TCommand As ICommand)(ByRef command As TCommand) As TCommand Implements ICommandContext.Execute
-        Throw New NotImplementedException()
+    Public Overridable Function Execute(Of TCommand As ICommand)(ByVal command As TCommand) As TCommand Implements ICommandContext.Execute
+        ObjectDisposedException.ThrowIf(IsDisposed, Me)
+        If command Is Nothing Then Return command
+
+        Dim friendlyName As String = GetFriendlyName(command.GetType(), LoggingOptions.NameStyle)
+        Dim fullCommandName = IIf(String.IsNullOrEmpty(command.Name), $"(Type = {friendlyName})", $"{command.Name} (Type = {friendlyName})")
+
+
+        Logger?.LogDebug("Executing {CommandName}", fullCommandName)
+
+        Try
+            If command.CanExecute(Me) Then
+                command.Execute(Me)
+            Else
+                Logger?.LogWarning("Could not execute {CommandName} due to: '{ExceptionMessage}'", fullCommandName, command.ExceptionMessage)
+            End If
+        Catch ex As Exception
+            Logger?.LogError(ex, "An error occurred while executing {CommandName}", fullCommandName)
+            Throw
+        Finally
+            Logger?.LogDebug("Finished executing {CommandName}", fullCommandName)
+        End Try
+
+        Return command
     End Function
 
     ''' <summary>

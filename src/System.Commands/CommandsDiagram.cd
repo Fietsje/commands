@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="System.Commands.Command" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQEAEAAAAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Command.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Commands.CommandContext" BaseTypeListCollapsed="true">
+    <Position X="14.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACIAAAQAAAAAABAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>CommandContext.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Commands.CommandResolver" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="4" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACCAAAACAAAAABAAAAAAgACAAAAAAABAAAA=</HashCode>
+      <FileName>CommandResolver.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Commands.CommandUnResolver" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAICAAAAAAAAAAQAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>CommandUnResolver.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Object">
+    <Position X="12.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
