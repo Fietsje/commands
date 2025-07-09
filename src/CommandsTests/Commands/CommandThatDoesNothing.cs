@@ -6,6 +6,7 @@ namespace CommandsTests.Commands
 	{
 		public override string? Name => nameof(CommandThatDoesNothing);
 
+
 		public override void Execute(ICommandContext commandContext)
 		{
 			// This command intentionally does nothing.

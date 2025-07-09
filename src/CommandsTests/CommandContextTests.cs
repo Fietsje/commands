@@ -93,5 +93,25 @@ namespace Commands.Tests
 			Assert.AreEqual(command, result);
 			Assert.IsTrue(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
 		}
+
+
+
+		[TestCategory("CommandContext")]
+		[TestMethod()]
+		public void Execute_WithCommandThatNeedsValidation_ThenCommandExecutionStopped()
+		{
+			// Arrange
+			var logger = new ConsoleLogger(LogLevel.Trace);
+			var resolver = new CommandResolver();
+			var context = new CommandContext(logger, resolver);
+			var command = new DiagnosticCommandThatUsesValidation();
+
+			// Act
+			var result = context.Execute(command);
+
+			Assert.AreEqual(command, result);
+			Assert.IsTrue(result!.CanExecuteCalled, "Expected CanExecute to be called on the command.");
+			Assert.IsFalse(result!.ExecuteCalled, "Expected Execute to not be called on the command.");
+		}
 	}
 }
