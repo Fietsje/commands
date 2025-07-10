@@ -11,4 +11,9 @@
 
 		void Execute(ICommandContext commandContext);
 	}
+
+	public interface ICommand<out TResult> : ICommand
+	{
+		TResult Result { get; }
+	}
 }
