@@ -3,15 +3,14 @@
 	internal class ConsoleLoggerScope : IDisposable
 	{
 		private bool disposedValue;
-		private readonly ICollection<ConsoleLoggerScope> _scopes;
+		private readonly Action? _OnDisposing;
 
 		public object State { get; private set; }
 
-		public ConsoleLoggerScope(object state, ICollection<ConsoleLoggerScope> scopes)
+		public ConsoleLoggerScope(object state, Action onDisposing)
 		{
 			State = state;
-			_scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
-			scopes.Add(this);
+			_OnDisposing = onDisposing;
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -26,7 +25,7 @@
 				// TODO: free unmanaged resources (unmanaged objects) and override finalizer
 				// TODO: set large fields to null
 				disposedValue = true;
-				_scopes.Remove(this);
+				_OnDisposing?.Invoke();
 			}
 		}
 
@@ -43,5 +42,10 @@
 			Dispose(disposing: true);
 			GC.SuppressFinalize(this);
 		}
+	}
+
+	internal class ConsoleLoggerScopeItem
+	{
+		public ConsoleLoggerScope? Scope { get; set; }
 	}
 }

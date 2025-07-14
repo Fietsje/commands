@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Commands.Diagnostics;
 
 namespace CommandsTests.Commands
 {

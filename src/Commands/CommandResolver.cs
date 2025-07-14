@@ -24,7 +24,7 @@
 			return Register(typeof(TCommand), factory);
 		}
 
-		public TCommand Resolve<TCommand>()
+		public virtual TCommand Resolve<TCommand>()
 			where TCommand : class, ICommand, new()
 		{
 			_factories.TryGetValue(typeof(TCommand), out var factory);

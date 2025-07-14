@@ -5,14 +5,17 @@ namespace Commands.Logging
 {
 	public class ConsoleLogger(LogLevel currentLogLevel) : ILogger
 	{
-		private readonly IList<ConsoleLoggerScope> _scopes = [];
+		private readonly IList<ConsoleLoggerScopeItem> _scopes = [];
 
 		public ICollection<ConsoleMessage> Messages { get; } = [];
 
 
 		public IDisposable? BeginScope<TState>(TState state) where TState : notnull
 		{
-			ConsoleLoggerScope scope = new ConsoleLoggerScope(state, _scopes);
+			ConsoleLoggerScopeItem? item = new();
+			ConsoleLoggerScope scope = new ConsoleLoggerScope(state, () => _scopes.Remove(item));
+			item.Scope = scope;
+			_scopes.Add(item);
 			return scope;
 		}
 
@@ -39,7 +42,7 @@ namespace Commands.Logging
 					builder.Append(exception.StackTrace);
 				}
 			}
-			foreach (var scope in _scopes) { builder.Append($" [{scope.State}]"); }
+			foreach (var scope in _scopes) { builder.Append($" [{scope.Scope!.State}]"); }
 
 			Messages.Add(new ConsoleMessage
 			{

@@ -1,8 +1,6 @@
-﻿using Commands;
-
-namespace CommandsTests.Commands
+﻿namespace Commands.Diagnostics
 {
-	internal class DiagnosticCommand : Command
+	public class DiagnosticCommand : Command
 	{
 		public override string? Name => "Diagnostic command for testing";
 		public bool CanExecuteCalled { get; private set; } = false;
