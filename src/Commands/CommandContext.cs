@@ -1,4 +1,5 @@
-﻿using Commands.Logging;
+﻿using System.ComponentModel.DataAnnotations;
+using Commands.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -19,8 +20,17 @@ namespace Commands
 
 		public virtual TCommand? Execute<TCommand>(TCommand? command)
 			where TCommand : class, ICommand
+		=> Execute(this, command);
+
+
+		public TCommand? Execute<TCommand>([Required] ICommandContext commandContext, TCommand? command)
+			where TCommand : class, ICommand
 		{
-			ObjectDisposedException.ThrowIf(IsDisposed, nameof(CommandContext));
+			ArgumentNullException.ThrowIfNull(commandContext, nameof(commandContext));
+			if (commandContext.IsDisposed)
+			{
+				throw new ObjectDisposedException(nameof(CommandContext), "Cannot execute command on a disposed context.");
+			}
 
 			if (command is null)
 			{
@@ -33,7 +43,7 @@ namespace Commands
 				? $"{FriendlyName.GetFriendlyName(command.GetType())} - {command.Name}"
 				: typeName;
 
-			if (!command.CanExecute(this))
+			if (!command.CanExecute(commandContext))
 			{
 				// log that the command cannot be executed
 				Logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);
@@ -43,7 +53,7 @@ namespace Commands
 			try
 			{
 				Logger?.LogDebug(CommandEventIds.CommandExecutionStarted, "Executing command: {CommandName}", fullName);
-				command.Execute(this);
+				command.Execute(commandContext);
 
 				if (string.IsNullOrEmpty(command.ExceptionMessage))
 				{
@@ -59,9 +69,7 @@ namespace Commands
 				Logger?.LogError(CommandEventIds.CommandExecutionError, ex, "Error executing command: {CommandName}", fullName);
 				throw;
 			}
-
 			return command;
-
 		}
 
 		protected virtual void Dispose(bool disposing)

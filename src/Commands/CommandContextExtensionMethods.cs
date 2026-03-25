@@ -26,10 +26,10 @@
 			return new CommandBuilder<TCommand>(context, condition);
 		}
 
-		public static ICommandAnalyzer<TCommand> Analyze<TCommand>(this ICommandContext commandContext)
+		public static ICommandAnalysis<TCommand> Analyze<TCommand>(this ICommandContext commandContext)
 			where TCommand : class, ICommand, new()
 		{
-			return new CommandAnalyzer<TCommand>(commandContext);
+			return new CommandAnalysis<TCommand>(commandContext);
 		}
 	}
 }

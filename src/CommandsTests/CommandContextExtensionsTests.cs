@@ -1,6 +1,6 @@
 ﻿using Commands;
+using Commands.Diagnostics;
 using Commands.Logging;
-using CommandsTests.Commands;
 using Microsoft.Extensions.Logging;
 
 namespace CommandsTests
