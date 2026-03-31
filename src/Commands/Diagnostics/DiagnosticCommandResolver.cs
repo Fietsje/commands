@@ -1,4 +1,4 @@
-﻿namespace Commands
+﻿namespace Commands.Diagnostics
 {
 	/// <summary>
 	/// A diagnostic wrapper around <see cref="CommandResolver"/> that invokes callbacks when a command type is being resolved

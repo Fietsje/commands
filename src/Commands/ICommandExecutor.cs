@@ -18,4 +18,14 @@
 		/// </returns>
 		TCommand? Execute();
 	}
-}
+
+	/// <summary>
+	/// Executes a configured <typeparamref name="ICommand"/> instance.
+	/// </summary>
+	public interface ICommandExecutor
+	{
+		/// <summary>
+		/// Executes the command.
+		/// </summary>
+		void Execute(ICommand command);
+	}

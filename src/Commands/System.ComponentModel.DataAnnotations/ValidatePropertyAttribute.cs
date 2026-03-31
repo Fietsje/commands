@@ -4,7 +4,7 @@
 	/// 
 	/// </summary>
 	/// <seealso cref="ValidationAttribute" />
-	public class ValidateObjectAttribute : ValidationAttribute
+	public class ValidatePropertyAttribute : ValidationAttribute
 	{
 		/// <summary>
 		/// Returns true if ... is valid.

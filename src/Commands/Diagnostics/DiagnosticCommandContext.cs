@@ -1,28 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Commands.Diagnostics
 {
-	public class DiagnosticCommandContext(ICommandContext commandContext) : ICommandContext
+	public class DiagnosticCommandContext(ICommandContext commandContext, ICommandExecutor commandExecutor) : ICommandContext
 	{
 		private bool disposedValue;
 		public Action? OnDisposed { get; set; }
-		public Action? OnExecuteCancelled { get; set; }
-		public Action<ICommand>? OnExecuted { get; set; }
-		public Action<ICommand>? OnExecuting { get; set; }
-		public Action<ICommand>? OnExecuteChecking { get; set; }
-		public Action<ICommand>? OnExecuteChecked { get; set; }
 
 		public ILogger Logger => commandContext.Logger;
 		public bool IsDisposed { get; }
 		public ICommandResolver CommandResolver => commandContext.CommandResolver;
 
 		public virtual TCommand? Execute<TCommand>(TCommand? command)
-			where TCommand : class, ICommand
-		=> Execute(this, command);
-
-
-		public TCommand? Execute<TCommand>([Required] ICommandContext commandContext, TCommand? command)
 			where TCommand : class, ICommand
 		{
 			ArgumentNullException.ThrowIfNull(commandContext, nameof(commandContext));
@@ -34,40 +23,12 @@ namespace Commands.Diagnostics
 			if (command is null)
 			{
 				Logger?.LogWarning(CommandEventIds.CommandNotProvided, "No command provided for execution.");
-				return command;
 			}
-
-			string typeName = FriendlyName.GetFriendlyName(command.GetType());
-			string fullName = !string.IsNullOrEmpty(command.Name) && !string.Equals(typeName, command.Name, StringComparison.OrdinalIgnoreCase)
-				? $"{FriendlyName.GetFriendlyName(command.GetType())} - {command.Name}"
-				: typeName;
-
-			if (!command.CanExecute(commandContext))
+			else
 			{
-				// log that the command cannot be executed
-				Logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);
-				return command;
+				commandExecutor?.Execute(command);
 			}
 
-			try
-			{
-				Logger?.LogDebug(CommandEventIds.CommandExecutionStarted, "Executing command: {CommandName}", fullName);
-				command.Execute(commandContext);
-
-				if (string.IsNullOrEmpty(command.ExceptionMessage))
-				{
-					Logger?.LogDebug(CommandEventIds.CommandExecutionCompleted, "Command executed successfully: {CommandName}", fullName);
-				}
-				else
-				{
-					Logger?.LogInformation(CommandEventIds.CommandCompletedWithMessage, "Command executed with message: {Message} for command: {CommandName}", command.ExceptionMessage, fullName);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logger?.LogError(CommandEventIds.CommandExecutionError, ex, "Error executing command: {CommandName}", fullName);
-				throw;
-			}
 			return command;
 		}
 

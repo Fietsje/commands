@@ -93,6 +93,14 @@
 			return StatusCode.GetHashCode();
 		}
 
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>
+		/// The result of the operator.
+		/// </returns>
 		public static bool operator ==(CommandStatus? left, CommandStatus? right)
 		{
 			if (left is null)
@@ -102,6 +110,14 @@
 			return left.Equals(right);
 		}
 
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>
+		/// The result of the operator.
+		/// </returns>
 		public static bool operator !=(CommandStatus? left, CommandStatus? right)
 		{
 			return !(left == right);

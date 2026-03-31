@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Commands.Logging;
+﻿using Commands.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -7,68 +6,32 @@ namespace Commands
 	public class CommandContext : ICommandContext
 	{
 		private bool disposedValue;
+		private readonly ICommandExecutor executor;
 
-		public ILogger Logger { get; private set; }
+		public ILogger Logger { get; init; }
 		public bool IsDisposed { get; private set; }
-		public ICommandResolver CommandResolver { get; }
+		public ICommandResolver CommandResolver { get; init; }
 
-		public CommandContext(ILogger logger, ICommandResolver resolver)
+		public CommandContext(ILogger? logger = null, ICommandResolver? resolver = null, ICommandExecutor? executor = null)
 		{
 			Logger = logger ?? new ConsoleLogger(LogLevel.Trace);
 			CommandResolver = resolver ?? new CommandResolver();
+			this.executor = executor ?? new CommandExecutor(this, Logger);
 		}
 
 		public virtual TCommand? Execute<TCommand>(TCommand? command)
 			where TCommand : class, ICommand
-		=> Execute(this, command);
-
-
-		public TCommand? Execute<TCommand>([Required] ICommandContext commandContext, TCommand? command)
-			where TCommand : class, ICommand
 		{
-			ArgumentNullException.ThrowIfNull(commandContext, nameof(commandContext));
-			if (commandContext.IsDisposed)
-			{
-				throw new ObjectDisposedException(nameof(CommandContext), "Cannot execute command on a disposed context.");
-			}
 
 			if (command is null)
 			{
 				Logger?.LogWarning(CommandEventIds.CommandNotProvided, "No command provided for execution.");
-				return command;
 			}
-
-			string typeName = FriendlyName.GetFriendlyName(command.GetType());
-			string fullName = !string.IsNullOrEmpty(command.Name) && !string.Equals(typeName, command.Name, StringComparison.OrdinalIgnoreCase)
-				? $"{FriendlyName.GetFriendlyName(command.GetType())} - {command.Name}"
-				: typeName;
-
-			if (!command.CanExecute(commandContext))
+			else
 			{
-				// log that the command cannot be executed
-				Logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);
-				return command;
+				executor.Execute(command);
 			}
 
-			try
-			{
-				Logger?.LogDebug(CommandEventIds.CommandExecutionStarted, "Executing command: {CommandName}", fullName);
-				command.Execute(commandContext);
-
-				if (string.IsNullOrEmpty(command.ExceptionMessage))
-				{
-					Logger?.LogDebug(CommandEventIds.CommandExecutionCompleted, "Command executed successfully: {CommandName}", fullName);
-				}
-				else
-				{
-					Logger?.LogInformation(CommandEventIds.CommandCompletedWithMessage, "Command executed with message: {Message} for command: {CommandName}", command.ExceptionMessage, fullName);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logger?.LogError(CommandEventIds.CommandExecutionError, ex, "Error executing command: {CommandName}", fullName);
-				throw;
-			}
 			return command;
 		}
 

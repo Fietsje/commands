@@ -34,30 +34,4 @@
 			return command;
 		}
 	}
-
-	/// <summary>
-	/// Executes a configured <typeparamref name="TCommand"/> instance created from an <see cref="ICommandContext"/>.
-	/// </summary>
-	/// <typeparam name="TCommand">The concrete command type. Must be a reference type that implements <see cref="ICommand"/> and provide a public parameterless constructor.</typeparam>
-	/// <param name="context">The command context used to create and execute the command.</param>
-	/// <param name="configuration">The configuration action to apply before execution.</param>
-	/// <param name="condition">When <c>true</c>, the command will be configured and executed.</param>
-	internal class CommandExecutor<TCommand>(ICommandContext context, Action<TCommand> configuration, bool condition) : ICommandExecutor<TCommand>
-		where TCommand : class, ICommand, new()
-	{
-		/// <summary>
-		/// Creates the command, applies the configured <paramref name="configuration"/> and executes it if <c>condition</c> is <c>true</c>.
-		/// </summary>
-		/// <returns>The created (and possibly executed) command instance, or <c>null</c> if execution produced no result.</returns>
-		public TCommand? Execute()
-		{
-			TCommand command = context.Create<TCommand>();
-			if (condition)
-			{
-				configuration(command);
-				context.Execute(command);
-			}
-			return command;
-		}
-	}
 }

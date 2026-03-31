@@ -5,7 +5,7 @@ namespace CommandsTests.Commands
 {
 	internal class DiagnosticCommandWithDeepValidation : DiagnosticCommand
 	{
-		[ValidateObject][Required] public ValidatedObject? Measurement { get; set; }
+		[ValidateProperty][Required] public ValidatedObject? Measurement { get; set; }
 	}
 
 	public class ValidatedObject
