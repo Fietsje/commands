@@ -1,4 +1,6 @@
-﻿namespace Commands
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Commands
 {
 	/// <summary>
 	/// Executes a configured <typeparamref name="TCommand"/> instance.
@@ -27,5 +29,6 @@
 		/// <summary>
 		/// Executes the command.
 		/// </summary>
-		void Execute(ICommand command);
+		void Execute([Required] ICommandContext commandContext, [Required] ICommand command);
 	}
+}

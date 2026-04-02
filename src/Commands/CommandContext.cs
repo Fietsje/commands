@@ -16,20 +16,19 @@ namespace Commands
 		{
 			Logger = logger ?? new ConsoleLogger(LogLevel.Trace);
 			CommandResolver = resolver ?? new CommandResolver();
-			this.executor = executor ?? new CommandExecutor(this, Logger);
+			this.executor = executor ?? new CommandExecutor(Logger);
 		}
 
 		public virtual TCommand? Execute<TCommand>(TCommand? command)
 			where TCommand : class, ICommand
 		{
-
 			if (command is null)
 			{
 				Logger?.LogWarning(CommandEventIds.CommandNotProvided, "No command provided for execution.");
 			}
 			else
 			{
-				executor.Execute(command);
+				executor.Execute(this, command);
 			}
 
 			return command;
