@@ -1,4 +1,7 @@
-﻿namespace Commands
+﻿using System;
+using System.Collections.Generic;
+
+namespace Commands
 {
 	/// <summary>
 	/// Default implementation of <see cref="ICommandResolver"/> that manages factories used to create <see cref="ICommand"/> instances.
@@ -8,7 +11,7 @@
 	/// </remarks>
 	public class CommandResolver : ICommandResolver
 	{
-		private readonly Dictionary<Type, Func<ICommand>> _factories = new();
+		private readonly Dictionary<Type, Func<ICommand>> _factories = new Dictionary<Type, Func<ICommand>>();
 
 		/// <summary>
 		/// Removes all registered command factories.
@@ -63,11 +66,11 @@
 			where TCommand : class, ICommand, new()
 		{
 			_factories.TryGetValue(typeof(TCommand), out var factory);
-			if (factory is not null)
+			if (factory != null)
 			{
 				return (TCommand)factory();
 			}
-			return new TCommand()!;
+			return new TCommand();
 		}
 	}
 }

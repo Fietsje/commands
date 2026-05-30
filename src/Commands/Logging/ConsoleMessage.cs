@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Commands.Logging
 {
@@ -20,11 +21,11 @@ namespace Commands.Logging
 		/// <summary>
 		/// Gets the formatted log message text.
 		/// </summary>
-		public string? Message { get; internal set; }
+		public string Message { get; internal set; }
 
 		/// <summary>
 		/// Gets an optional <see cref="Exception"/> associated with the log entry.
 		/// </summary>
-		public Exception? Exception { get; internal set; }
+		public Exception Exception { get; internal set; }
 	}
 }

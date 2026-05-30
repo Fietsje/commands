@@ -1,4 +1,6 @@
-﻿namespace Commands
+﻿using System;
+
+namespace Commands
 {
 	public sealed class CommandStatus : IEquatable<CommandStatus>
 	{
@@ -11,7 +13,7 @@
 		/// <summary>
 		/// Gets the description of the commandstatus.
 		/// </summary>
-		public string? Description { get; private set; }
+		public string Description { get; private set; }
 
 
 		/// <summary>
@@ -60,7 +62,7 @@
 		/// <returns>
 		///   <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.
 		/// </returns>
-		public override bool Equals(object? obj)
+		public override bool Equals(object obj)
 		{
 			return Equals(obj as CommandStatus);
 		}
@@ -72,7 +74,7 @@
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		public bool Equals(CommandStatus? other)
+		public bool Equals(CommandStatus other)
 		{
 			if (other is null)
 			{
@@ -101,7 +103,7 @@
 		/// <returns>
 		/// The result of the operator.
 		/// </returns>
-		public static bool operator ==(CommandStatus? left, CommandStatus? right)
+		public static bool operator ==(CommandStatus left, CommandStatus right)
 		{
 			if (left is null)
 			{
@@ -118,7 +120,7 @@
 		/// <returns>
 		/// The result of the operator.
 		/// </returns>
-		public static bool operator !=(CommandStatus? left, CommandStatus? right)
+		public static bool operator !=(CommandStatus left, CommandStatus right)
 		{
 			return !(left == right);
 		}

@@ -18,7 +18,7 @@ namespace Commands
 		/// <returns>
 		/// The executed <typeparamref name="TCommand"/> instance, or <c>null</c> if execution produced no result.
 		/// </returns>
-		TCommand? Execute();
+		TCommand Execute();
 	}
 
 	/// <summary>

@@ -2,7 +2,7 @@
 {
 	public class DiagnosticCommand : Command
 	{
-		public override string? Name => "Diagnostic command for testing";
+		public override string Name => "Diagnostic command for testing";
 		public bool CanExecuteCalled { get; private set; } = false;
 		public bool ExecuteCalled { get; private set; } = false;
 		public int MyProperty { get; set; }

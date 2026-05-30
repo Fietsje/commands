@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Linq;
+using System.Text;
 
 namespace Commands
 {
@@ -40,7 +42,7 @@ namespace Commands
 
 			if (type.IsGenericType)
 			{
-				StringBuilder stringBuilder = new();
+				StringBuilder stringBuilder = new StringBuilder();
 				stringBuilder.Append(type.Name.Split('`').FirstOrDefault());
 				stringBuilder.Append('<');
 				Type[] arguments = type.GetGenericArguments();

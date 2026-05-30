@@ -1,4 +1,6 @@
-﻿namespace Commands.Diagnostics
+﻿using System;
+
+namespace Commands.Diagnostics
 {
 	/// <summary>
 	/// A diagnostic wrapper around <see cref="CommandResolver"/> that invokes callbacks when a command type is being resolved
@@ -9,12 +11,12 @@
 		/// <summary>
 		/// Optional callback invoked before a command of the specified <see cref="Type"/> is resolved.
 		/// </summary>
-		public Action<Type>? OnResolving { get; set; }
+		public Action<Type> OnResolving { get; set; }
 
 		/// <summary>
 		/// Optional callback invoked after a command instance has been resolved.
 		/// </summary>
-		public Action<ICommand>? OnResolved { get; set; }
+		public Action<ICommand> OnResolved { get; set; }
 
 		/// <summary>
 		/// Resolves a new instance of <typeparamref name="TCommand"/>, invoking <see cref="OnResolving"/>

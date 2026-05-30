@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -10,20 +11,32 @@ namespace Commands
 	/// <param name="context">The command context used to create and execute the command.</param>
 	/// <param name="configuration">The configuration action to apply before execution.</param>
 	/// <param name="condition">When <c>true</c>, the command will be configured and executed.</param>
-	internal class CommandExecutor<TCommand>(ICommandContext context, Action<TCommand> configuration, bool condition) : ICommandExecutor<TCommand>
+	internal class CommandExecutor<TCommand>
+		: ICommandExecutor<TCommand>
 		where TCommand : class, ICommand, new()
 	{
+		private readonly ICommandContext _commandContext;
+		private readonly Action<TCommand> _config;
+		private readonly bool _condition;
+
+		public CommandExecutor(ICommandContext context, Action<TCommand> configuration, bool condition)
+		{
+			_commandContext = context;
+			_config = configuration;
+			_condition = condition;
+		}
+
 		/// <summary>
 		/// Creates the command, applies the configured <paramref name="configuration"/> and executes it if <c>condition</c> is <c>true</c>.
 		/// </summary>
 		/// <returns>The created (and possibly executed) command instance, or <c>null</c> if execution produced no result.</returns>
-		public TCommand? Execute()
+		public TCommand Execute()
 		{
-			TCommand command = context.Create<TCommand>();
-			if (condition)
+			TCommand command = _commandContext.Create<TCommand>();
+			if (_condition)
 			{
-				configuration(command);
-				context.Execute(command);
+				_config(command);
+				_commandContext.Execute(command);
 			}
 			return command;
 		}
@@ -34,8 +47,14 @@ namespace Commands
 	/// Executes an <see cref="ICommand"/> instance and logs diagnostic events during execution.
 	/// </summary>
 	/// <param name="Logger">The <see cref="ILogger"/> used to emit diagnostic events. May be <c>null</c>.</param>
-	public class CommandExecutor(ILogger Logger) : ICommandExecutor
+	public class CommandExecutor : ICommandExecutor
 	{
+		private readonly ILogger _logger;
+
+		public CommandExecutor(ILogger logger)
+		{
+			_logger = logger;
+		}
 
 		/// <summary>
 		/// Executes the supplied <paramref name="command"/> using the provided <paramref name="commandContext"/>.
@@ -55,27 +74,27 @@ namespace Commands
 			if (!command.CanExecute(commandContext))
 			{
 				// log that the command cannot be executed
-				Logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);
+				_logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);
 				return;
 			}
 
 			try
 			{
-				Logger?.LogDebug(CommandEventIds.CommandExecutionStarted, "Executing command: {CommandName}", fullName);
+				_logger?.LogDebug(CommandEventIds.CommandExecutionStarted, "Executing command: {CommandName}", fullName);
 				command.Execute(commandContext);
 
 				if (string.IsNullOrEmpty(command.ExceptionMessage))
 				{
-					Logger?.LogDebug(CommandEventIds.CommandExecutionCompleted, "Command executed successfully: {CommandName}", fullName);
+					_logger?.LogDebug(CommandEventIds.CommandExecutionCompleted, "Command executed successfully: {CommandName}", fullName);
 				}
 				else
 				{
-					Logger?.LogInformation(CommandEventIds.CommandCompletedWithMessage, "Command executed with message: {Message} for command: {CommandName}", command.ExceptionMessage, fullName);
+					_logger?.LogInformation(CommandEventIds.CommandCompletedWithMessage, "Command executed with message: {Message} for command: {CommandName}", command.ExceptionMessage, fullName);
 				}
 			}
 			catch (Exception ex)
 			{
-				Logger?.LogError(CommandEventIds.CommandExecutionError, ex, "Error executing command: {CommandName}", fullName);
+				_logger?.LogError(CommandEventIds.CommandExecutionError, ex, "Error executing command: {CommandName}", fullName);
 				throw;
 			}
 		}

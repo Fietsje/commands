@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Commands
 {
@@ -33,6 +34,6 @@ namespace Commands
 		/// <typeparam name="TCommand">The concrete command type. Must implement <see cref="ICommand"/> and be a reference type.</typeparam>
 		/// <param name="command">The command instance to execute. May be <c>null</c>.</param>
 		/// <returns>The executed command instance or <c>null</c> if execution produced no result.</returns>
-		TCommand? Execute<TCommand>(TCommand? command) where TCommand : class, ICommand;
+		TCommand Execute<TCommand>(TCommand command) where TCommand : class, ICommand;
 	}
 }

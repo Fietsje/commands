@@ -1,4 +1,6 @@
-﻿namespace Commands.Logging
+﻿using System;
+
+namespace Commands.Logging
 {
 	/// <summary>
 	/// Represents a logical logging scope for <see cref="ConsoleLogger"/>.
@@ -10,7 +12,7 @@
 	internal sealed class ConsoleLoggerScope : IDisposable
 	{
 		private bool disposedValue;
-		private readonly Action? _OnDisposing;
+		private readonly Action _OnDisposing;
 
 		/// <summary>
 		/// Gets the state object associated with this scope.
@@ -78,6 +80,6 @@
 		/// <summary>
 		/// Gets or sets the associated <see cref="ConsoleLoggerScope"/>.
 		/// </summary>
-		public ConsoleLoggerScope? Scope { get; set; }
+		public ConsoleLoggerScope Scope { get; set; }
 	}
 }

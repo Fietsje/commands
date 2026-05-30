@@ -1,4 +1,6 @@
-﻿namespace System.ComponentModel.DataAnnotations
+﻿using System.Collections.Generic;
+
+namespace System.ComponentModel.DataAnnotations
 {
 	/// <summary>
 	/// 
@@ -14,9 +16,12 @@
 		/// <returns>
 		/// An instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> class.
 		/// </returns>
-		protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			ArgumentNullException.ThrowIfNull(value, nameof(value));
+			if (value is null)
+			{
+				throw new ArgumentNullException(nameof(value));
+			}
 
 			var results = new List<ValidationResult>();
 			var context = new ValidationContext(value, null, null);

@@ -14,7 +14,7 @@
 			return context.CommandResolver.Resolve<TCommand>();
 		}
 
-		public static TCommand? Execute<TCommand>(this ICommandContext context)
+		public static TCommand Execute<TCommand>(this ICommandContext context)
 			where TCommand : class, ICommand, new()
 		{
 			return context.Execute(context.Create<TCommand>());

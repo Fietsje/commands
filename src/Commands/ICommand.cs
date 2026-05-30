@@ -11,12 +11,12 @@
 		/// <summary>
 		/// Gets the optional name of the command.
 		/// </summary>
-		string? Name { get; }
+		string Name { get; }
 
 		/// <summary>
 		/// Gets a human-readable message describing an exception that occurred during execution, if any.
 		/// </summary>
-		string? ExceptionMessage { get; }
+		string ExceptionMessage { get; }
 
 		/// <summary>
 		/// Gets an implementation-defined exception code or number associated with an error that occurred during execution.

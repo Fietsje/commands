@@ -1,12 +1,15 @@
-﻿namespace Commands
+﻿using System;
+
+namespace Commands
 {
 	/// <summary>
 	/// Disposable helper that runs a provided cleanup <see cref="Action"/> when disposed.
 	/// </summary>
 	/// <param name="cleanup">The action to invoke when the instance is disposed. May be <c>null</c>.</param>
-	internal sealed class CommandUnresolver(Action cleanup) : IDisposable
+	internal sealed class CommandUnresolver : IDisposable
 	{
 		private bool disposedValue;
+		private readonly Action cleanup;
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is disposed.
@@ -15,6 +18,11 @@
 		///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
 		/// </value>
 		public bool IsDisposed => disposedValue;
+
+		public CommandUnresolver(Action action)
+		{
+			this.cleanup = action;
+		}
 
 		/// <summary>
 		/// Releases resources used by the instance.

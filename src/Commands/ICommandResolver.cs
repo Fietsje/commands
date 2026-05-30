@@ -1,4 +1,6 @@
-﻿namespace Commands
+﻿using System;
+
+namespace Commands
 {
 	/// <summary>
 	/// Resolves, registers and manages command factory registrations used to create <see cref="ICommand"/> instances.

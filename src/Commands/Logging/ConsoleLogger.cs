@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Commands.Logging
@@ -8,15 +10,21 @@ namespace Commands.Logging
 	/// to the console and stores them in the <see cref="Messages"/> collection for inspection.
 	/// </summary>
 	/// <param name="currentLogLevel">The minimum <see cref="LogLevel"/> that will be recorded and written to the console.</param>
-	public class ConsoleLogger(LogLevel currentLogLevel) : ILogger
+	public class ConsoleLogger : ILogger
 	{
-		private readonly IList<ConsoleLoggerScopeItem> _scopes = [];
+
+		private readonly IList<ConsoleLoggerScopeItem> _scopes = new List<ConsoleLoggerScopeItem>();
+		private readonly LogLevel _currentLogLevel;
 
 		/// <summary>
 		/// Gets a collection of <see cref="ConsoleMessage"/> entries captured by this logger.
 		/// </summary>
-		public ICollection<ConsoleMessage> Messages { get; } = [];
+		public ICollection<ConsoleMessage> Messages { get; } = new List<ConsoleMessage>();
 
+		public ConsoleLogger(LogLevel level)
+		{
+			_currentLogLevel = level;
+		}
 
 		/// <summary>
 		/// Begins a logical operation scope.
@@ -26,9 +34,9 @@ namespace Commands.Logging
 		/// <returns>
 		/// An <see cref="IDisposable"/> that ends the scope when disposed, or <c>null</c> if scope support is not available.
 		/// </returns>
-		public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+		public IDisposable BeginScope<TState>(TState state)
 		{
-			ConsoleLoggerScopeItem? item = new();
+			ConsoleLoggerScopeItem item = new ConsoleLoggerScopeItem();
 			ConsoleLoggerScope scope = new ConsoleLoggerScope(state, () => _scopes.Remove(item));
 			item.Scope = scope;
 			_scopes.Add(item);
@@ -42,7 +50,7 @@ namespace Commands.Logging
 		/// <returns><c>true</c> if the provided <paramref name="logLevel"/> is greater than or equal to the configured minimum; otherwise <c>false</c>.</returns>
 		public bool IsEnabled(LogLevel logLevel)
 		{
-			return logLevel >= currentLogLevel;
+			return logLevel >= _currentLogLevel;
 		}
 
 		/// <summary>
@@ -54,15 +62,15 @@ namespace Commands.Logging
 		/// <param name="state">The state associated with the log entry.</param>
 		/// <param name="exception">An optional <see cref="Exception"/> related to the log entry.</param>
 		/// <param name="formatter">A function that creates the formatted message string from the <paramref name="state"/> and <paramref name="exception"/>.</param>
-		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
 		{
 			if (!IsEnabled(logLevel))
 			{
 				return;
 			}
 
-			StringBuilder builder = new();
-			builder.Append($"[{logLevel}] {(eventId.Name != null ? eventId.Name : eventId.Id)} - {formatter(state, exception)}");
+			StringBuilder builder = new StringBuilder();
+			builder.Append($"[{logLevel}] {(eventId.Name ?? eventId.Id.ToString())} - {formatter(state, exception)}");
 			if (exception != null)
 			{
 				builder.Append($" Exception: {exception.Message}");
@@ -72,7 +80,7 @@ namespace Commands.Logging
 					builder.Append(exception.StackTrace);
 				}
 			}
-			foreach (var scope in _scopes) { builder.Append($" [{scope.Scope!.State}]"); }
+			foreach (var scope in _scopes) { builder.Append($" [{scope.Scope.State}]"); }
 
 			Messages.Add(new ConsoleMessage
 			{

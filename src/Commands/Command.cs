@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Commands
 {
@@ -12,12 +13,12 @@ namespace Commands
 		/// <summary>
 		/// Gets the optional name of the command. Derived types may override to provide a meaningful name.
 		/// </summary>
-		public virtual string? Name { get; }
+		public virtual string Name { get; }
 
 		/// <summary>
 		/// Gets a human readable message describing an exception that occurred during execution, if any.
 		/// </summary>
-		public string? ExceptionMessage { get; protected set; }
+		public string ExceptionMessage { get; protected set; }
 
 		/// <summary>
 		/// Gets an implementation-defined exception code associated with an error that occurred during execution.
@@ -78,12 +79,12 @@ namespace Commands
 		/// </summary>
 		private void ValidateCommand()
 		{
-			Collection<ValidationResult> validationResults = [];
+			Collection<ValidationResult> validationResults = new Collection<ValidationResult>();
 			Validator.TryValidateObject(this, new ValidationContext(this), validationResults, true);
 
-			CompositeValidationResult? compositeResult = validationResults.OfType<CompositeValidationResult>().FirstOrDefault();
+			CompositeValidationResult compositeResult = validationResults.OfType<CompositeValidationResult>().FirstOrDefault();
 
-			string? validationMessage =
+			string validationMessage =
 				compositeResult?.Results?.FirstOrDefault()?.ErrorMessage ??
 				validationResults.FirstOrDefault()?.ErrorMessage;
 

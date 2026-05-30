@@ -1,4 +1,5 @@
-﻿using Commands.Logging;
+﻿using System;
+using Commands.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Commands.Diagnostics
@@ -15,13 +16,13 @@ namespace Commands.Diagnostics
 		/// <summary>
 		/// Optional callback invoked once the context has been disposed.
 		/// </summary>
-		public Action? OnDisposed { get; set; }
+		public Action OnDisposed { get; set; }
 
 		/// <summary>
 		/// The logger used by the context. If <c>null</c> is passed to the constructor
 		/// a <see cref="ConsoleLogger"/> with <see cref="LogLevel.Trace"/> is used as fallback.
 		/// </summary>
-		public ILogger Logger { get; init; }
+		public ILogger Logger { get; protected set; }
 
 		/// <summary>
 		/// Indicates whether the context has been disposed.
@@ -31,7 +32,7 @@ namespace Commands.Diagnostics
 		/// <summary>
 		/// The command resolver used to locate or build command instances.
 		/// </summary>
-		public ICommandResolver CommandResolver { get; init; }
+		public ICommandResolver CommandResolver { get; protected set; }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DiagnosticCommandContext"/>.
@@ -52,7 +53,7 @@ namespace Commands.Diagnostics
 		/// <typeparam name="TCommand">The concrete command type that implements <see cref="ICommand"/>.</typeparam>
 		/// <param name="command">The command instance to execute. May be <c>null</c>.</param>
 		/// <returns>The same command instance that was passed in. Returns <c>null</c> if <paramref name="command"/> was <c>null</c>.</returns>
-		public virtual TCommand? Execute<TCommand>(TCommand? command)
+		public virtual TCommand Execute<TCommand>(TCommand command)
 			where TCommand : class, ICommand
 		{
 

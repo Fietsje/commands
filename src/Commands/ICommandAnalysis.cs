@@ -28,14 +28,14 @@
 		/// <summary>
 		/// Gets an optional exception message describing why the command cannot be executed, if any.
 		/// </summary>
-		string? ExceptionMessage { get; }
+		string ExceptionMessage { get; }
 
 		/// <summary>
 		/// Deconstructs the analysis into its primary values.
 		/// </summary>
 		/// <param name="canExecute">Receives the value of <see cref="CanExecute"/>.</param>
 		/// <param name="exceptionMessage">Receives the value of <see cref="ExceptionMessage"/>.</param>
-		void Deconstruct(out bool canExecute, out string? exceptionMessage);
+		void Deconstruct(out bool canExecute, out string exceptionMessage);
 
 		/// <summary>
 		/// Deconstructs the analysis into its primary values including the analyzed command.
@@ -43,6 +43,6 @@
 		/// <param name="canExecute">Receives the value of <see cref="CanExecute"/>.</param>
 		/// <param name="exceptionMessage">Receives the value of <see cref="ExceptionMessage"/>.</param>
 		/// <param name="command">Receives the analyzed <see cref="ICommand"/> instance.</param>
-		void Deconstruct(out bool canExecute, out string? exceptionMessage, out ICommand command);
+		void Deconstruct(out bool canExecute, out string exceptionMessage, out ICommand command);
 	}
 }

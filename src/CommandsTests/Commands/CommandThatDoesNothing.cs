@@ -4,7 +4,7 @@ namespace CommandsTests.Commands
 {
 	internal class CommandThatDoesNothing : Command
 	{
-		public override string? Name => nameof(CommandThatDoesNothing);
+		public override string Name => nameof(CommandThatDoesNothing);
 
 
 		public override void Execute(ICommandContext commandContext)

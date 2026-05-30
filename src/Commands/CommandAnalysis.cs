@@ -1,4 +1,6 @@
-﻿namespace Commands
+﻿using System;
+
+namespace Commands
 {
 
 	/// <summary>
@@ -27,7 +29,7 @@
 		/// <summary>
 		/// Gets an optional exception message produced by the analyzed command, if any.
 		/// </summary>
-		public string? ExceptionMessage => _command?.ExceptionMessage;
+		public string ExceptionMessage => _command?.ExceptionMessage;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CommandAnalysis{TCommand}"/> class
@@ -47,7 +49,7 @@
 		/// </summary>
 		/// <param name="canExecute">Receives the value of <see cref="CanExecute"/>.</param>
 		/// <param name="exceptionMessage">Receives the value of <see cref="ExceptionMessage"/>.</param>
-		public void Deconstruct(out bool canExecute, out string? exceptionMessage)
+		public void Deconstruct(out bool canExecute, out string exceptionMessage)
 		{
 			Deconstruct(out canExecute, out exceptionMessage, out _);
 		}
@@ -58,7 +60,7 @@
 		/// <param name="canExecute">Receives the value of <see cref="CanExecute"/>.</param>
 		/// <param name="exceptionMessage">Receives the value of <see cref="ExceptionMessage"/>.</param>
 		/// <param name="command">Receives the analyzed <see cref="ICommand"/> instance.</param>
-		public void Deconstruct(out bool canExecute, out string? exceptionMessage, out ICommand command)
+		public void Deconstruct(out bool canExecute, out string exceptionMessage, out ICommand command)
 		{
 			canExecute = CanExecute;
 			exceptionMessage = ExceptionMessage;

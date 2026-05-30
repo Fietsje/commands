@@ -1,4 +1,5 @@
-﻿using Commands.Logging;
+﻿using System;
+using Commands.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -8,18 +9,18 @@ namespace Commands
 		private bool disposedValue;
 		private readonly ICommandExecutor executor;
 
-		public ILogger Logger { get; init; }
+		public ILogger Logger { get; protected set; }
 		public bool IsDisposed { get; private set; }
-		public ICommandResolver CommandResolver { get; init; }
+		public ICommandResolver CommandResolver { get; protected set; }
 
-		public CommandContext(ILogger? logger = null, ICommandResolver? resolver = null, ICommandExecutor? executor = null)
+		public CommandContext(ILogger logger = null, ICommandResolver resolver = null, ICommandExecutor executor = null)
 		{
 			Logger = logger ?? new ConsoleLogger(LogLevel.Trace);
 			CommandResolver = resolver ?? new CommandResolver();
 			this.executor = executor ?? new CommandExecutor(Logger);
 		}
 
-		public virtual TCommand? Execute<TCommand>(TCommand? command)
+		public virtual TCommand Execute<TCommand>(TCommand command)
 			where TCommand : class, ICommand
 		{
 			if (command is null)

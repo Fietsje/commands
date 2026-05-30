@@ -4,7 +4,7 @@ namespace CommandsTests.Commands
 {
 	internal class CommandThatFailsValidation : Command
 	{
-		public override string? Name => nameof(CommandThatFailsValidation);
+		public override string Name => nameof(CommandThatFailsValidation);
 
 		public override bool CanExecute(ICommandContext commandContext)
 		{

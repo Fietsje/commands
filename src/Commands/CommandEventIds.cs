@@ -14,47 +14,47 @@ namespace Commands
 		/// <summary>
 		/// Gets the event id used for general debug statements.
 		/// </summary>
-		public static EventId Debug => new(1000, "Debug statement");
+		public static EventId Debug => new EventId(1000, "Debug statement");
 
 		/// <summary>
 		/// Gets the event id used when command validation fails.
 		/// </summary>
-		public static EventId ValidationErrorOcurred => new(1001, "ValidationErrorOccurred");
+		public static EventId ValidationErrorOcurred => new EventId(1001, "ValidationErrorOccurred");
 
 		/// <summary>
 		/// Gets the event id raised when command execution starts.
 		/// </summary>
-		public static EventId CommandExecutionStarted => new(1002, "CommandExecutionStarted");
+		public static EventId CommandExecutionStarted => new EventId(1002, "CommandExecutionStarted");
 
 		/// <summary>
 		/// Gets the event id raised when command execution completes successfully.
 		/// </summary>
-		public static EventId CommandExecutionCompleted => new(1003, "CommandExecutionCompleted");
+		public static EventId CommandExecutionCompleted => new EventId(1003, "CommandExecutionCompleted");
 
 		/// <summary>
 		/// Gets the event id raised when command execution fails with an error.
 		/// </summary>
-		public static EventId CommandExecutionFailed => new(1004, "CommandExecutionFailed");
+		public static EventId CommandExecutionFailed => new EventId(1004, "CommandExecutionFailed");
 
 		/// <summary>
 		/// Gets the event id used when no command was provided to an execution API.
 		/// </summary>
-		public static EventId CommandNotProvided => new(1005, "CommandNotProvided");
+		public static EventId CommandNotProvided => new EventId(1005, "CommandNotProvided");
 
 		/// <summary>
 		/// Gets the event id used when a command cannot be executed in the current context.
 		/// </summary>
-		public static EventId CommandCannotExecute => new(1006, "CommandCannotExecute");
+		public static EventId CommandCannotExecute => new EventId(1006, "CommandCannotExecute");
 
 		/// <summary>
 		/// Gets the event id used when a command completes with an informational message.
 		/// </summary>
-		public static EventId CommandCompletedWithMessage => new(1007, "CommandCompletedWithMessage");
+		public static EventId CommandCompletedWithMessage => new EventId(1007, "CommandCompletedWithMessage");
 
 		/// <summary>
 		/// Gets the event id used for unexpected execution errors that occurred during command processing.
 		/// </summary>
-		public static EventId CommandExecutionError => new(1008, "CommandExecutionError");
+		public static EventId CommandExecutionError => new EventId(1008, "CommandExecutionError");
 
 	}
 }

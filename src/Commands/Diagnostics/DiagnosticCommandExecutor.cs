@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 
 namespace Commands.Diagnostics
@@ -8,43 +9,50 @@ namespace Commands.Diagnostics
 	/// the execution lifecycle.
 	/// </summary>
 	/// <param name="Logger">The logger used to emit diagnostic events. May be <c>null</c>.</param>
-	public class DiagnosticCommandExecutor(ILogger Logger) : ICommandExecutor
+	public class DiagnosticCommandExecutor : ICommandExecutor
 	{
+		private readonly ILogger Logger;
+
 		/// <summary>
 		/// Invoked before the command's <see cref="ICommand.CanExecute"/> check is performed.
 		/// </summary>
-		public Action<ICommand>? OnExecuteChecking { get; set; }
+		public Action<ICommand> OnExecuteChecking { get; set; }
 
 		/// <summary>
 		/// Invoked after the command's <see cref="ICommand.CanExecute"/> check has completed.
 		/// </summary>
-		public Action<ICommand>? OnExecuteChecked { get; set; }
+		public Action<ICommand> OnExecuteChecked { get; set; }
 
 		/// <summary>
 		/// Invoked when a command's execution is cancelled because it cannot execute.
 		/// </summary>
-		public Action<ICommand>? OnExecutionCancelled { get; set; }
+		public Action<ICommand> OnExecutionCancelled { get; set; }
 
 		/// <summary>
 		/// Invoked immediately before <see cref="ICommand.Execute"/> is called.
 		/// </summary>
-		public Action<ICommand>? OnBeforeExecuting { get; set; }
+		public Action<ICommand> OnBeforeExecuting { get; set; }
 
 		/// <summary>
 		/// Invoked immediately after <see cref="ICommand.Execute"/> returns successfully.
 		/// </summary>
-		public Action<ICommand>? OnAfterExecuting { get; set; }
+		public Action<ICommand> OnAfterExecuting { get; set; }
 
 		/// <summary>
 		/// Invoked when an unhandled <see cref="Exception"/> is thrown while executing a command.
 		/// The exception is also logged before this callback is invoked.
 		/// </summary>
-		public Action<ICommand, Exception>? OnExecutionError { get; set; }
+		public Action<ICommand, Exception> OnExecutionError { get; set; }
 
 		/// <summary>
 		/// Invoked when command execution has ended. The final <see cref="CommandStatus"/> is provided.
 		/// </summary>
-		public Action<ICommand, CommandStatus>? OnExecutionEnded { get; set; }
+		public Action<ICommand, CommandStatus> OnExecutionEnded { get; set; }
+
+		public DiagnosticCommandExecutor(ILogger logger)
+		{
+			this.Logger = logger;
+		}
 
 		/// <summary>
 		/// Executes the supplied <paramref name="command"/> using the provided <paramref name="commandContext"/>.
@@ -56,7 +64,10 @@ namespace Commands.Diagnostics
 		/// <exception cref="Exception">Any exception thrown by <see cref="ICommand.Execute"/> is propagated to the caller after being logged and forwarded to <see cref="OnExecutionError"/>.</exception>
 		public void Execute([Required] ICommandContext commandContext, [Required] ICommand command)
 		{
-			ArgumentNullException.ThrowIfNull(command, nameof(command));
+			if (command is null)
+			{
+				throw new ArgumentNullException(nameof(command));
+			}
 
 			string typeName = FriendlyName.GetFriendlyName(command.GetType());
 			string fullName = !string.IsNullOrEmpty(command.Name) && !string.Equals(typeName, command.Name, StringComparison.OrdinalIgnoreCase)

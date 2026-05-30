@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Commands
 {
@@ -25,7 +26,7 @@ namespace Commands
 		/// <returns>
 		/// The executed command instance, or <c>null</c> if execution produced no result.
 		/// </returns>
-		TCommand? Execute();
+		TCommand Execute();
 	}
 
 }

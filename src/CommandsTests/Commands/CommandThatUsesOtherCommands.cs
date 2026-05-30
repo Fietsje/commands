@@ -5,7 +5,7 @@ namespace CommandsTests.Commands
 {
 	internal class CommandThatUsesOtherCommands : Command
 	{
-		public override string? Name => "Command that uses other commands";
+		public override string Name => "Command that uses other commands";
 
 		public override void Execute(ICommandContext commandContext)
 		{

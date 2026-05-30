@@ -1,4 +1,6 @@
-﻿namespace System.ComponentModel.DataAnnotations
+﻿using System.Collections.Generic;
+
+namespace System.ComponentModel.DataAnnotations
 {
 	/// <summary>
 	/// 
@@ -6,7 +8,7 @@
 	/// <seealso cref="ValidationResult" />
 	public class CompositeValidationResult : ValidationResult
 	{
-		private readonly List<ValidationResult> _results = [];
+		private readonly List<ValidationResult> _results = new List<ValidationResult>();
 
 		/// <summary>
 		/// Gets the results.
