@@ -28,7 +28,7 @@ namespace Commands
 		/// <summary>
 		/// Gets the current <see cref="CommandStatus"/> for the command.
 		/// </summary>
-		public CommandStatus Status { get; protected set; } = CommandStatus.Ok;
+		public CommandStatus Status { get; protected set; } = CommandStatus.NotSet;
 
 		/// <summary>
 		/// Determines whether the command can be executed in the provided <paramref name="commandContext"/>.
@@ -70,6 +70,14 @@ namespace Commands
 		protected void Cancel()
 		{
 			Status = CommandStatus.Cancelled;
+		}
+
+		/// <summary>
+		/// Stops the command and sets the <see cref="Status"/> to <see cref="CommandStatus.Stopped"/>.
+		/// </summary>
+		protected void Stop()
+		{
+			Status = CommandStatus.Stopped;
 		}
 
 		/// <summary>

@@ -1,29 +1,21 @@
-﻿namespace Commands
+﻿using System;
+
+namespace Commands
 {
 	public static class CommandContextExtensionMethods
 	{
-		public static ICommandBuilder<TCommand> Build<TCommand>(this ICommandContext context)
-			where TCommand : class, ICommand, new()
-		{
-			return new CommandBuilder<TCommand>(context, true);
-		}
-
-		public static TCommand Create<TCommand>(this ICommandContext context)
-			where TCommand : class, ICommand, new()
-		{
-			return context.CommandResolver.Resolve<TCommand>();
-		}
-
 		public static TCommand Execute<TCommand>(this ICommandContext context)
 			where TCommand : class, ICommand, new()
 		{
-			return context.Execute(context.Create<TCommand>());
+			return Execute<TCommand>(context, command => { });
 		}
 
-		public static ICommandBuilder<TCommand> When<TCommand>(this ICommandContext context, bool condition)
+		public static TCommand Execute<TCommand>(this ICommandContext context, Action<TCommand> action)
 			where TCommand : class, ICommand, new()
 		{
-			return new CommandBuilder<TCommand>(context, condition);
+			TCommand command = context.CommandResolver.Resolve<TCommand>();
+			action(command);
+			return context.Execute(command);
 		}
 
 		public static ICommandAnalysis<TCommand> Analyze<TCommand>(this ICommandContext commandContext)

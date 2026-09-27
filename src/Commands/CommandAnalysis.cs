@@ -40,7 +40,7 @@ namespace Commands
 		public CommandAnalysis(ICommandContext commandContext)
 		{
 			_commandContext = commandContext ?? throw new ArgumentNullException(nameof(commandContext));
-			_command = _commandContext.Create<TCommand>();
+			_command = _commandContext.CommandResolver.Resolve<TCommand>();
 			CanExecute = _command.CanExecute(_commandContext);
 		}
 

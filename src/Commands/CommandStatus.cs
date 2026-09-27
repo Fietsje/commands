@@ -2,9 +2,8 @@
 
 namespace Commands
 {
-	public sealed class CommandStatus : IEquatable<CommandStatus>
+	public struct CommandStatus : IEquatable<CommandStatus>
 	{
-
 		/// <summary>
 		/// Gets the statuscode of the commandstatus.
 		/// </summary>
@@ -14,7 +13,6 @@ namespace Commands
 		/// Gets the description of the commandstatus.
 		/// </summary>
 		public string Description { get; private set; }
-
 
 		/// <summary>
 		/// Creates a new <c>CommandStatus</c> instance stating that the command does not have a status yet.
@@ -27,22 +25,19 @@ namespace Commands
 		public static CommandStatus Ok => new CommandStatus { StatusCode = 1, Description = "Ok" };
 
 		/// <summary>
+		/// Creates a new <c>CommandStatus</c> instance stating that the command is ready for execution.
+		/// </summary>
+		public static CommandStatus Stopped => new CommandStatus { StatusCode = 2, Description = "Stopped" };
+
+		/// <summary>
 		/// Creates a new <c>CommandStatus</c> instance stating that the command has been cancelled.
 		/// </summary>
-		public static CommandStatus Cancelled => new CommandStatus { StatusCode = 101, Description = "Cancelled" };
+		public static CommandStatus Cancelled => new CommandStatus { StatusCode = 3, Description = "Cancelled" };
 
 		/// <summary>
 		/// Creates a new <c>CommandStatus</c> instance stating that a validation error has ocurred.
 		/// </summary>
-		public static CommandStatus ValidationError => new CommandStatus { StatusCode = 102, Description = "Validation Error" };
-
-		/// <summary>
-		/// Prevents a default instance of the <see cref="CommandStatus"/> class from being created.
-		/// </summary>
-		private CommandStatus()
-		{
-			// Private constructor to prevent instantiation
-		}
+		public static CommandStatus ValidationError => new CommandStatus { StatusCode = 4, Description = "Validation Error" };
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CommandStatus"/> class.
@@ -64,7 +59,7 @@ namespace Commands
 		/// </returns>
 		public override bool Equals(object obj)
 		{
-			return Equals(obj as CommandStatus);
+			return Equals((CommandStatus)obj);
 		}
 
 		/// <summary>
@@ -76,11 +71,6 @@ namespace Commands
 		/// </returns>
 		public bool Equals(CommandStatus other)
 		{
-			if (other is null)
-			{
-				return false;
-			}
-
 			return StatusCode == other.StatusCode;
 		}
 
@@ -105,11 +95,7 @@ namespace Commands
 		/// </returns>
 		public static bool operator ==(CommandStatus left, CommandStatus right)
 		{
-			if (left is null)
-			{
-				return right is null;
-			}
-			return left.Equals(right);
+			return left.StatusCode == right.StatusCode;
 		}
 
 		/// <summary>
@@ -122,7 +108,7 @@ namespace Commands
 		/// </returns>
 		public static bool operator !=(CommandStatus left, CommandStatus right)
 		{
-			return !(left == right);
+			return left.StatusCode != right.StatusCode;
 		}
 	}
 }

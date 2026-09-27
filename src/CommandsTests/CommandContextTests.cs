@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 namespace Commands.Tests
 {
 	[TestClass()]
+		[TestCategory("CommandContext")]
 	public class CommandContextTests
 	{
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithNoCommand_ThenNullReturned()
 		{
@@ -23,7 +23,6 @@ namespace Commands.Tests
 			Assert.IsTrue(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommand_ThenCommandReturned()
 		{
@@ -40,7 +39,6 @@ namespace Commands.Tests
 			Assert.IsFalse(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected no warning message.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatThrowsException_ThenCommandExecutionFailed()
 		{
@@ -57,7 +55,6 @@ namespace Commands.Tests
 			Assert.ThrowsException<InvalidOperationException>(act, "Expected an exception to be thrown during command execution.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatCallsOtherCommand_ThenCommandReturned()
 		{
@@ -74,7 +71,6 @@ namespace Commands.Tests
 			Assert.IsFalse(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected no warning message.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatFailsValidation_ThenCommandExecutionStopped()
 		{
@@ -91,7 +87,6 @@ namespace Commands.Tests
 			Assert.IsTrue(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatNeedsValidation_ThenCommandExecutionStopped()
 		{
@@ -109,7 +104,6 @@ namespace Commands.Tests
 			Assert.IsFalse(result!.ExecuteCalled, "Expected Execute to not be called on the command.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatNeedsDeepValidation_ThenCommandExecutionStopped()
 		{
@@ -127,7 +121,6 @@ namespace Commands.Tests
 			Assert.IsFalse(result!.ExecuteCalled, "Expected Execute to not be called on the command.");
 		}
 
-		[TestCategory("CommandContext")]
 		[TestMethod()]
 		public void Execute_WithCommandThatNeedsDeepValidation_ThenCommandExecutionCompleted()
 		{
