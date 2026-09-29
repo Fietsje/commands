@@ -1,23 +1,24 @@
 ﻿using Commands.Logging;
+using CommandsTests;
 using CommandsTests.Commands;
 using Microsoft.Extensions.Logging;
 
 namespace Commands.Tests
 {
 	[TestClass()]
-		[TestCategory("CommandContext")]
-	public class CommandContextTests
+	[TestCategory("CommandContext")]
+	public class CommandContextTests : BaseTest
 	{
 		[TestMethod()]
 		public void Execute_WithNoCommand_ThenNullReturned()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
+			//var logger = new ConsoleLogger(LogLevel.Trace);
+			//var resolver = new CommandResolver();
+			//var context = new CommandContext(logger, resolver);
 
 			// Act
-			var result = context.Execute<ICommand>(null);
+			var result = commandContext.Execute<ICommand>(null);
 
 			Assert.IsNull(result);
 			Assert.IsTrue(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
@@ -27,16 +28,13 @@ namespace Commands.Tests
 		public void Execute_WithCommand_ThenCommandReturned()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new CommandThatDoesNothing();
 
 			// Act
-			var result = context.Execute<ICommand>(command);
+			var result = commandContext.Execute<ICommand>(command);
 
 			Assert.AreEqual(command, result);
-			Assert.IsFalse(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected no warning message.");
+			Assert.IsFalse(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
 		}
 
 		[TestMethod()]
@@ -59,13 +57,10 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatCallsOtherCommand_ThenCommandReturned()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new CommandThatUsesOtherCommands();
 
 			// Act
-			var result = context.Execute<ICommand>(command);
+			var result = commandContext.Execute<ICommand>(command);
 
 			Assert.AreEqual(command, result);
 			Assert.IsFalse(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected no warning message.");
@@ -75,13 +70,10 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatFailsValidation_ThenCommandExecutionStopped()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new CommandThatFailsValidation();
 
 			// Act
-			var result = context.Execute<ICommand>(command);
+			var result = commandContext.Execute<ICommand>(command);
 
 			Assert.AreEqual(command, result);
 			Assert.IsTrue(logger.Messages.Any(m => m.LogLevel == LogLevel.Warning), "Expected a warning message.");
@@ -91,13 +83,10 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatNeedsValidation_ThenCommandExecutionStopped()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new DiagnosticCommandThatUsesValidation();
 
 			// Act
-			var result = context.Execute(command);
+			var result = commandContext.Execute(command);
 
 			Assert.AreEqual(command, result);
 			Assert.IsTrue(result!.CanExecuteCalled, "Expected CanExecute to be called on the command.");
@@ -108,13 +97,10 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatNeedsDeepValidation_ThenCommandExecutionStopped()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new DiagnosticCommandWithDeepValidation { Measurement = new ValidatedObject { } };
 
 			// Act
-			var result = context.Execute(command);
+			var result = commandContext.Execute(command);
 
 			Assert.AreEqual(command, result);
 			Assert.IsTrue(result!.CanExecuteCalled, "Expected CanExecute to be called on the command.");
@@ -125,13 +111,10 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatNeedsDeepValidation_ThenCommandExecutionCompleted()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new DiagnosticCommandWithDeepValidation { Measurement = new ValidatedObject { Value = "123", Start = 1, End = 2 } };
 
 			// Act
-			var result = context.Execute(command);
+			var result = commandContext.Execute(command);
 
 			Assert.AreEqual(command, result);
 			Assert.IsTrue(result!.CanExecuteCalled, "Expected CanExecute to be called on the command.");

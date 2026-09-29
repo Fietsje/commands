@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Logging;
 
 namespace Commands.Diagnostics
 {
@@ -78,7 +78,7 @@ namespace Commands.Diagnostics
 			bool canExecute = command.CanExecute(commandContext);
 			OnExecuteChecked?.Invoke(command);
 
-			if (canExecute)
+			if (!canExecute)
 			{
 				// log that the command cannot be executed
 				Logger?.LogWarning(CommandEventIds.CommandCannotExecute, "Command {CommandName} cannot be executed: {ExceptionMessage}", fullName, command.ExceptionMessage);

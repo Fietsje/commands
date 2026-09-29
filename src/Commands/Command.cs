@@ -45,12 +45,12 @@ namespace Commands
 				Status = CommandStatus.ValidationError;
 			}
 
-			if (Status == CommandStatus.Ok)
+			if (Status == CommandStatus.NotSet)
 			{
 				ValidateCommand();
 			}
 
-			return Status == CommandStatus.Ok;
+			return Status == CommandStatus.NotSet;
 		}
 
 		/// <summary>
