@@ -10,30 +10,27 @@ namespace CommandsTests
 	public class BaseTest
 	{
 		protected static TestContext testContext;
-		protected IServiceProvider serviceProvider;
-		protected ICommandContext commandContext;
-		protected ConsoleLogger logger;
+		protected static IServiceProvider serviceProvider;
+		protected static ICommandContext commandContext;
+		protected static ConsoleLogger logger;
+		protected static int counter = 0;
+		private static IDisposable? scope;
 
 		[TestInitialize]
 		public void TestInitialize()
 		{
 			// Perform any necessary setup before each test
-			logger = new ConsoleLogger(LogLevel.Trace);
-
-			serviceProvider = new ServiceCollection()
-				.AddSingleton<ILogger>(_ => logger)
-				.AddTransient<ICommandResolver, DiagnosticCommandResolver>()
-				.AddTransient<ICommandExecutor, DiagnosticCommandExecutor>()
-				.AddTransient<ICommandContext>(provider => new CommandContext(provider))
-				.BuildServiceProvider();
-
+			counter++;
+			logger = serviceProvider.GetService<ILogger>() as ConsoleLogger;
 			commandContext = serviceProvider.GetService<ICommandContext>();
+			scope = logger.BeginScope(new Dictionary<string, object> { ["TestId"] = counter });
 		}
 
 		[TestCleanup]
 		public void TestCleanup()
 		{
 			// Perform any necessary cleanup after each test
+			scope?.Dispose();
 		}
 
 		[AssemblyInitialize]
@@ -41,6 +38,13 @@ namespace CommandsTests
 		{
 			// Perform any necessary setup before any tests in the assembly are run
 			testContext = context;
+
+			serviceProvider = new ServiceCollection()
+				.AddSingleton<ILogger>(_ => new ConsoleLogger(LogLevel.Trace))
+				.AddTransient<ICommandResolver, DiagnosticCommandResolver>()
+				.AddTransient<ICommandExecutor, DiagnosticCommandExecutor>()
+				.AddTransient<ICommandContext, CommandContext>()
+				.BuildServiceProvider();
 		}
 	}
 }

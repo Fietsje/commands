@@ -1,4 +1,5 @@
 ﻿using Commands.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -7,60 +8,29 @@ namespace Commands
 	public class CommandContext : ICommandContext
 	{
 		private readonly ICommandExecutor commandExecutor;
-		private bool ownsLogger;
-		private bool ownsResolver;
-		private bool ownsExecutor;
+		protected IServiceProvider ServiceProvider { get; private set; }
 
 		public ILogger Logger { get; private set; }
 		public bool IsDisposed { get; private set; }
 		public ICommandResolver CommandResolver { get; private set; }
 
-		public CommandContext(ILogger logger = null, ICommandResolver resolver = null, ICommandExecutor executor = null)
-		{
-			Logger = logger;
-			CommandResolver = resolver;
-			commandExecutor = executor;
-
-			if (Logger is null)
-			{
-				Logger = new ConsoleLogger(LogLevel.Trace);
-				ownsLogger = true;
-			}
-			if (CommandResolver is null)
-			{
-				CommandResolver = new CommandResolver();
-				ownsResolver = true;
-			}
-			if (commandExecutor is null)
-			{
-				commandExecutor = new CommandExecutor(Logger);
-				ownsExecutor = true;
-			}
-		}
-
 		public CommandContext(IServiceProvider serviceProvider)
 		{
 			ArgumentNullException.ThrowIfNull(serviceProvider);
 
-			Logger = serviceProvider.GetService(typeof(ILogger)) as ILogger;
+			LoggerCollection loggers = new(serviceProvider.GetServices<ILogger>());
 			CommandResolver = serviceProvider.GetService(typeof(ICommandResolver)) as ICommandResolver;
 			commandExecutor = serviceProvider.GetService(typeof(ICommandExecutor)) as ICommandExecutor;
+			ServiceProvider = serviceProvider;
 
-			if (Logger is null)
+			if (loggers.Count == 0)
 			{
-				Logger = new ConsoleLogger(LogLevel.Trace);
-				ownsLogger = true;
+				loggers.AddLogger(new ConsoleLogger(LogLevel.Trace));
 			}
-			if (CommandResolver is null)
-			{
-				CommandResolver = new CommandResolver();
-				ownsResolver = true;
-			}
-			if (commandExecutor is null)
-			{
-				commandExecutor = new CommandExecutor(Logger);
-				ownsExecutor = true;
-			}
+
+			Logger = loggers;
+			CommandResolver ??= new CommandResolver();
+			commandExecutor ??= new CommandExecutor(Logger);
 		}
 
 		public virtual TCommand Execute<TCommand>(TCommand command)
@@ -85,23 +55,9 @@ namespace Commands
 				if (disposing)
 				{
 					// TODO: dispose managed state (managed objects)
-					if (ownsLogger)
-					{
-						IDisposable disposableLogger = Logger as IDisposable;
-						disposableLogger?.Dispose();
-					}
-
-					if (ownsResolver)
-					{
-						IDisposable disposableResolver = CommandResolver as IDisposable;
-						disposableResolver?.Dispose();
-					}
-
-					if (ownsExecutor)
-					{
-						IDisposable disposableExecutor = commandExecutor as IDisposable;
-						disposableExecutor?.Dispose();
-					}
+					Logger = null;
+					ServiceProvider = null;
+					CommandResolver = null;
 				}
 
 				// TODO: free unmanaged resources (unmanaged objects) and override finalizer

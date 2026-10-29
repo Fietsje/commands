@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace Commands.Logging
 {
@@ -71,6 +71,7 @@ namespace Commands.Logging
 
 			StringBuilder builder = new StringBuilder();
 			builder.Append($"[{logLevel}] {(eventId.Name ?? eventId.Id.ToString())} - {formatter(state, exception)}");
+
 			if (exception != null)
 			{
 				builder.Append($" Exception: {exception.Message}");
@@ -80,7 +81,27 @@ namespace Commands.Logging
 					builder.Append(exception.StackTrace);
 				}
 			}
-			foreach (var scope in _scopes) { builder.Append($" [{scope.Scope.State}]"); }
+
+			foreach (var scope in _scopes)
+			{
+				if (scope.Scope.State is IDictionary<string, object> dict)
+				{
+					builder.Append(" [");
+					foreach (var kvp in dict)
+					{
+						builder.Append($"{kvp.Key}={kvp.Value}, ");
+					}
+					if (dict.Count > 0)
+					{
+						builder.Length -= 2; // Remove the trailing comma and space
+					}
+					builder.Append("]");
+				}
+				else
+				{
+					builder.Append($" [{scope.Scope.State}]");
+				}
+			}
 
 			Messages.Add(new ConsoleMessage
 			{

@@ -5,9 +5,20 @@ using System.Linq;
 
 namespace Commands.Logging
 {
-	internal class LoggerCollection : ILogger
+	internal class LoggerCollection : ILogger, IReadOnlyCollection<ILogger>
 	{
 		private readonly IList<ILogger> _loggers = [];
+		public int Count => _loggers.Count;
+
+		public IEnumerator<ILogger> GetEnumerator()
+		{
+			return _loggers.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _loggers.GetEnumerator();
+		}
 
 		public LoggerCollection(IEnumerable<ILogger> loggers)
 		{
@@ -17,6 +28,12 @@ namespace Commands.Logging
 		public LoggerCollection(params ILogger[] loggers)
 		{
 			_loggers = loggers.ToList();
+		}
+
+		internal void AddLogger(ILogger logger)
+		{
+			ArgumentNullException.ThrowIfNull(logger);
+			_loggers.Add(logger);
 		}
 
 		public IDisposable BeginScope<TState>(TState state) where TState : notnull

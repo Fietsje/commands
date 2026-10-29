@@ -1,5 +1,4 @@
-﻿using Commands.Logging;
-using CommandsTests;
+﻿using CommandsTests;
 using CommandsTests.Commands;
 using Microsoft.Extensions.Logging;
 
@@ -13,9 +12,6 @@ namespace Commands.Tests
 		public void Execute_WithNoCommand_ThenNullReturned()
 		{
 			// Arrange
-			//var logger = new ConsoleLogger(LogLevel.Trace);
-			//var resolver = new CommandResolver();
-			//var context = new CommandContext(logger, resolver);
 
 			// Act
 			var result = commandContext.Execute<ICommand>(null);
@@ -41,14 +37,11 @@ namespace Commands.Tests
 		public void Execute_WithCommandThatThrowsException_ThenCommandExecutionFailed()
 		{
 			// Arrange
-			var logger = new ConsoleLogger(LogLevel.Trace);
-			var resolver = new CommandResolver();
-			var context = new CommandContext(logger, resolver);
 			var command = new CommandThatThrowsException();
 			ICommand? result = null;
 
 			// Act
-			Action act = () => result = context.Execute<ICommand>(command);
+			Action act = () => result = commandContext.Execute<ICommand>(command);
 
 			Assert.ThrowsException<InvalidOperationException>(act, "Expected an exception to be thrown during command execution.");
 		}
